@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://blog-api.test",
+            "url": "http://my-default-host.com",
             "description": "API Server"
         }
     ],
@@ -193,6 +193,97 @@
                         "Bearer": []
                     }
                 ]
+            }
+        },
+        "/api/auth/request-reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "ارسال کد بازیابی رمز عبور",
+                "operationId": "3f1328b6ef6dadf538679028a4dec251",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "کد بازیابی رمز عبور ارسال شد"
+                    },
+                    "422": {
+                        "description": "ایمیل نامعتبر یا یافت نشد"
+                    }
+                }
+            }
+        },
+        "/api/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "تنظیم رمز جدید با کد تایید",
+                "operationId": "e08a13da1d76ef5182ce1e04d19fd218",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "code",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "رمز عبور با موفقیت تغییر یافت"
+                    },
+                    "422": {
+                        "description": "کد تایید نامعتبر یا منقضی شده"
+                    }
+                }
             }
         }
     },

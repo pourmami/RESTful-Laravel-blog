@@ -4,12 +4,12 @@ namespace Modules\Auth\app\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
+use Modules\Auth\app\Models\ActivationCode;
+use Modules\Auth\app\Http\Requests\CompleteRegisterRequest;
 use Modules\Auth\app\Http\Requests\SendActivationCodeRequest;
 use Modules\Auth\app\Http\Requests\VerifyActivationCodeRequest;
-use Modules\Auth\app\Http\Requests\CompleteRegisterRequest;
-use Modules\Auth\app\Models\ActivationCode;
 
 class AuthController extends Controller
 {
@@ -46,7 +46,7 @@ class AuthController extends Controller
             'expires_at' => now()->addMinutes(10),
         ]);
 
-        // TODO: dispatch job to send email
+        // TODO: Mail::to($request->email)->send(new ActivationCodeMail($code));
 
         return response()->json(['message' => 'کد فعال‌سازی ارسال شد.']);
     }

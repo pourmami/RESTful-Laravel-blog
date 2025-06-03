@@ -11,7 +11,7 @@ class SendResetCodeRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return ['email' => ['required', 'email', 'exists:users,email']];
     }
 
     /**
