@@ -95,7 +95,7 @@ class AuthController extends Controller
         $code->used = true;
         $code->save();
 
-        $user = User::create(['email' => $request->email]);
+        $user = User::create(['email' => $request->email, 'email_verified_at' => now()]);
         $token = $user->createToken('pre-register-token', ['pre-register'])->plainTextToken;
 
         return response()->json([
@@ -150,16 +150,12 @@ class AuthController extends Controller
      */
     public function completeRegister(CompleteRegisterRequest $request): JsonResponse
     {
-        if (! auth()->user()->tokenCan('pre-register')) {
-            return response()->json(['message' => 'دسترسی غیرمجاز'], 403);
-        }
-
         $user = auth()->user();
 
         $user->update([
             'first_name' => $request->first_name,
             'last_name'  => $request->last_name,
-            'password'   => bcrypt($request->password),
+            'password'   => Hash::make($request->password),
         ]);
 
         // حذف همه توکن‌های قبلی
