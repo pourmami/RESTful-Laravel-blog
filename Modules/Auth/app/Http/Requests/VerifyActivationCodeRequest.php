@@ -11,7 +11,10 @@ class VerifyActivationCodeRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'email' => ['required', 'email'],
+            'code'  => ['required', 'digits:6'],
+        ];
     }
 
     /**

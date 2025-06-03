@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Auth\Http\Controllers\AuthController;
+use Modules\Auth\app\Http\Controllers\AuthController;
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('auth', AuthController::class)->names('auth');
-});
+Route::post('activation-code', [AuthController::class, 'sendActivationCode']);
+Route::post('verify-activation-code', [AuthController::class, 'verifyActivationCode']);

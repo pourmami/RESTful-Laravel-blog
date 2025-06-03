@@ -1,56 +1,48 @@
 <?php
 
-namespace Modules\Auth\Http\Controllers;
+namespace Modules\Auth\app\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Modules\Auth\Http\Requests\SendActivationCodeRequest;
+use Modules\Auth\Http\Requests\VerifyActivationCodeRequest;
+use Modules\Auth\Models\ActivationCode;
 
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function sendActivationCode(SendActivationCodeRequest $request): JsonResponse
     {
-        return view('auth::index');
+        $code = rand(100000, 999999);
+        ActivationCode::create([
+            'email'      => $request->email,
+            'code'       => $code,
+            'type'       => 'register',
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        // TODO: dispatch job to send email
+
+        return response()->json(['message' => 'کد فعال‌سازی ارسال شد.']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function verifyActivationCode(VerifyActivationCodeRequest $request, $id): JsonResponse
     {
-        return view('auth::create');
+        $code = ActivationCode::where('email', $request->email)
+            ->where('code', $request->code)
+            ->where('type', 'register')
+            ->where('used', false)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$code) {
+            return response()->json(['message' => 'کد نامعتبر یا منقضی شده است.'], 422);
+        }
+
+        $code->used = true;
+        $code->save();
+
+        return response()->json(['message' => 'کد فعال‌سازی تأیید شد.']);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('auth::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('auth::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
 }
