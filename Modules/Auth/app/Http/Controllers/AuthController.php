@@ -4,8 +4,11 @@ namespace Modules\Auth\app\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\ValidationException;
+use Modules\Auth\app\Http\Requests\LoginRequest;
 use Modules\Auth\app\Models\ActivationCode;
 use Modules\Auth\app\Http\Requests\CompleteRegisterRequest;
 use Modules\Auth\app\Http\Requests\SendActivationCodeRequest;
@@ -170,7 +173,78 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'ثبت‌نام با موفقیت تکمیل شد.',
             'token' => $fullAccessToken,
-            'user' => $user,
+            'user' => [
+                'email' => $user->email,
+                'first_name' => $user->first_name ?? null,
+                'last_name' => $user->last_name ?? null,
+            ],
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/login",
+     *     summary="ورود کاربر با ایمیل و رمز عبور",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="12345678")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="ورود موفق",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="token", type="string", example="1|abc123def456"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="email", type="string", example="user@example.com"),
+     *                 @OA\Property(property="first_name", type="string", example="علی"),
+     *                 @OA\Property(property="last_name", type="string", example="رضایی")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="خطا در اعتبارسنجی یا اطلاعات ورود نامعتبر",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="ایمیل یا رمز عبور اشتباه است.")
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            throw ValidationException::withMessages([
+                'email' => ['ایمیل یا رمز عبور اشتباه است.'],
+            ]);
+        }
+
+        $user = Auth::user();
+        $fullAccessToken = $user->createToken('access-token')->plainTextToken;
+
+        return response()->json([
+            'token' => $fullAccessToken,
+            'user' => [
+                'email' => $user->email,
+                'first_name' => $user->first_name ?? null,
+                'last_name' => $user->last_name ?? null,
+            ],
         ]);
     }
 }

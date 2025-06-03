@@ -2,13 +2,16 @@
 
 namespace Modules\Auth\Tests\Feature;
 
+use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ForgetPasswordTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function test_user_can_request_password_reset_code()
     {
