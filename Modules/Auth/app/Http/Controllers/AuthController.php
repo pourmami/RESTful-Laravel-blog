@@ -2,12 +2,13 @@
 
 namespace Modules\Auth\app\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Modules\Auth\Http\Requests\SendActivationCodeRequest;
-use Modules\Auth\Http\Requests\VerifyActivationCodeRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Modules\Auth\app\Http\Requests\SendActivationCodeRequest;
+use Modules\Auth\app\Http\Requests\VerifyActivationCodeRequest;
+use Modules\Auth\app\Http\Requests\CompleteRegisterRequest;
 use Modules\Auth\Models\ActivationCode;
 
 class AuthController extends Controller
@@ -36,7 +37,7 @@ class AuthController extends Controller
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$code) {
+        if (! $code) {
             return response()->json(['message' => 'کد نامعتبر یا منقضی شده است.'], 422);
         }
 
@@ -44,5 +45,38 @@ class AuthController extends Controller
         $code->save();
 
         return response()->json(['message' => 'کد فعال‌سازی تأیید شد.']);
+    }
+
+    public function completeRegister(CompleteRegisterRequest $request): JsonResponse
+    {
+        $exists = User::where('email', $request->email)->exists();
+        if ($exists) {
+            return response()->json(['message' => 'کاربر قبلاً ثبت‌نام کرده است.'], 409);
+        }
+
+        $lastVerifiedCode = ActivationCode::where('email', $request->email)
+            ->where('type', 'register')
+            ->where('used', true)
+            ->latest()
+            ->first();
+
+        if (! $lastVerifiedCode) {
+            return response()->json(['message' => 'کدی تأیید نشده است.'], 422);
+        }
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+        ]);
+
+        // assign default role
+        $user->assignRole('user');
+
+        return response()->json([
+            'message' => 'ثبت‌نام با موفقیت انجام شد.',
+            'user' => $user,
+        ], 201);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Auth\Http\Requests;
+namespace Modules\Auth\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,12 @@ class CompleteRegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'email'      => ['required', 'email', 'exists:activation_codes,email'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+        ];
     }
 
     /**
