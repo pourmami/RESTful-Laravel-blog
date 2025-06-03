@@ -53,7 +53,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/auth/check-code",
+     *     path="/api/auth/verify-code",
      *     tags={"Auth"},
      *     summary="بررسی صحت کد فعال‌سازی",
      *     description="ایمیل و کد فعال‌سازی را بررسی می‌کند و در صورت معتبر بودن توکن موقت برمی‌گرداند.",
@@ -79,7 +79,7 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function verifyActivationCode(VerifyActivationCodeRequest $request, $id): JsonResponse
+    public function verifyActivationCode(VerifyActivationCodeRequest $request): JsonResponse
     {
         $code = ActivationCode::where('email', $request->email)
             ->where('code', $request->code)
@@ -95,32 +95,52 @@ class AuthController extends Controller
         $code->used = true;
         $code->save();
 
-        return response()->json(['message' => 'کد فعال‌سازی تأیید شد.']);
+        $user = User::create(['email' => $request->email]);
+        $token = $user->createToken('pre-register-token', ['pre-register'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'کد فعال‌سازی تأیید شد.',
+            'token' => $token, // این توکن در هدر Authorization فرستاده میشه
+        ]);
     }
 
     /**
      * @OA\Post(
      *     path="/api/auth/complete-register",
+     *     summary="تکمیل ثبت‌نام با توکن موقت",
+     *     description="کاربر پس از تأیید ایمیل با کد فعال‌سازی، اطلاعات ثبت‌نام کامل را وارد کرده و ثبت‌نام کامل می‌شود.",
+     *     operationId="authCompleteRegister",
      *     tags={"Auth"},
-     *     summary="تکمیل ثبت‌نام کاربر پس از تأیید ایمیل",
-     *     description="با دریافت نام، نام‌خانوادگی و رمز عبور، ثبت‌نام را نهایی می‌کند. توکن موقت باید همراه درخواست ارسال شود.",
      *     security={{"Bearer":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"first_name", "last_name", "password"},
-     *             @OA\Property(property="first_name", type="string", example="محمد"),
-     *             @OA\Property(property="last_name", type="string", example="جعفری"),
-     *             @OA\Property(property="password", type="string", format="password", example="StrongPassword123!")
+     *             required={"first_name", "last_name", "password", "password_confirmation"},
+     *             @OA\Property(property="first_name", type="string", example="علی"),
+     *             @OA\Property(property="last_name", type="string", example="رضایی"),
+     *             @OA\Property(property="password", type="string", format="password", example="12345678"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="12345678")
      *         )
      *     ),
+     *
      *     @OA\Response(
-     *         response=201,
-     *         description="ثبت‌نام با موفقیت انجام شد و توکن نهایی بازگردانده شد"
+     *         response=200,
+     *         description="ثبت‌نام با موفقیت تکمیل شد",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="ثبت‌نام با موفقیت تکمیل شد."),
+     *             @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhb..."),
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="email", type="string", example="test@example.com"),
+     *                 @OA\Property(property="first_name", type="string", example="علی"),
+     *                 @OA\Property(property="last_name", type="string", example="رضایی"),
+     *             )
+     *         )
      *     ),
+     *
      *     @OA\Response(
-     *         response=401,
-     *         description="توکن موقت نامعتبر یا منقضی شده"
+     *         response=403,
+     *         description="توکن دسترسی غیرمجاز یا اشتباه"
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -130,34 +150,31 @@ class AuthController extends Controller
      */
     public function completeRegister(CompleteRegisterRequest $request): JsonResponse
     {
-        $exists = User::where('email', $request->email)->exists();
-        if ($exists) {
-            return response()->json(['message' => 'کاربر قبلاً ثبت‌نام کرده است.'], 409);
+        if (! auth()->user()->tokenCan('pre-register')) {
+            return response()->json(['message' => 'دسترسی غیرمجاز'], 403);
         }
 
-        $lastVerifiedCode = ActivationCode::where('email', $request->email)
-            ->where('type', 'register')
-            ->where('used', true)
-            ->latest()
-            ->first();
+        $user = auth()->user();
 
-        if (! $lastVerifiedCode) {
-            return response()->json(['message' => 'کدی تأیید نشده است.'], 422);
-        }
-
-        $user = User::create([
+        $user->update([
             'first_name' => $request->first_name,
             'last_name'  => $request->last_name,
-            'email'      => $request->email,
-            'password'   => Hash::make($request->password),
+            'password'   => bcrypt($request->password),
         ]);
+
+        // حذف همه توکن‌های قبلی
+        $user->tokens()->delete();
 
         // assign default role
         $user->assignRole('user');
 
+        // ایجاد توکن دسترسی کامل
+        $fullAccessToken = $user->createToken('access-token')->plainTextToken;
+
         return response()->json([
-            'message' => 'ثبت‌نام با موفقیت انجام شد.',
+            'message' => 'ثبت‌نام با موفقیت تکمیل شد.',
+            'token' => $fullAccessToken,
             'user' => $user,
-        ], 201);
+        ]);
     }
 }

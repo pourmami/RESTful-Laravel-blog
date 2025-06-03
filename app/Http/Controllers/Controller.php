@@ -16,6 +16,13 @@ namespace App\Http\Controllers;
  *     url=L5_SWAGGER_CONST_HOST,
  *     description="API Server"
  * )
+ *
+ * @OA\SecurityScheme(
+ *     securityScheme="Bearer",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
  */
 abstract class Controller
 {
