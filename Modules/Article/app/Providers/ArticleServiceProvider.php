@@ -2,11 +2,14 @@
 
 namespace Modules\Article\app\Providers;
 
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Article\app\Models\Article;
 use Nwidart\Modules\Traits\PathNamespace;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Modules\Article\app\Policies\ArticlePolicy;
 
 class ArticleServiceProvider extends ServiceProvider
 {
@@ -27,6 +30,7 @@ class ArticleServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        Gate::policy(Article::class, ArticlePolicy::class);
     }
 
     /**
