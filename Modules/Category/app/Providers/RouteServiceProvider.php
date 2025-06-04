@@ -1,15 +1,13 @@
 <?php
 
-namespace Modules\Auth\app\Providers;
+namespace Modules\Category\app\Providers;
 
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
-use Modules\Auth\app\Http\Middleware\EnsureTokenHasAbility;
-use Modules\Auth\app\Http\Middleware\RoleMiddleware;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    protected string $name = 'Auth';
+    protected string $name = 'Category';
 
     /**
      * Called before routes are registered.
@@ -19,8 +17,6 @@ class RouteServiceProvider extends ServiceProvider
     public function boot(): void
     {
         parent::boot();
-        Route::aliasMiddleware('ability', EnsureTokenHasAbility::class);
-        Route::aliasMiddleware('api_role', RoleMiddleware::class);
     }
 
     /**

@@ -388,6 +388,187 @@
                     }
                 }
             }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "لیست دسته‌بندی‌ها",
+                "operationId": "875cba32c7c46e88ff01f0d56c9361e6",
+                "responses": {
+                    "200": {
+                        "description": "لیست دسته‌بندی‌ها با زیردسته‌ها"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "ایجاد دسته‌بندی جدید",
+                "operationId": "b0d2bc13d0474064caff79f99cac176b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "الکترونیک"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "electronics"
+                                    },
+                                    "parent_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "دسته‌بندی با موفقیت ایجاد شد"
+                    },
+                    "422": {
+                        "description": "خطای اعتبارسنجی"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "دریافت جزئیات دسته‌بندی",
+                "operationId": "3031c356311b66b9b566c0d7864a3706",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "شناسه دسته‌بندی",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "جزئیات دسته‌بندی با زیردسته‌ها"
+                    },
+                    "404": {
+                        "description": "دسته‌بندی پیدا نشد"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "بروزرسانی دسته‌بندی",
+                "operationId": "42f5d045dd286bdac258b697739a8c75",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "شناسه دسته‌بندی",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "الکترونیک به‌روز شده"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "updated-electronics"
+                                    },
+                                    "parent_id": {
+                                        "type": "integer",
+                                        "example": null,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "دسته‌بندی بروزرسانی شد"
+                    },
+                    "404": {
+                        "description": "دسته‌بندی پیدا نشد"
+                    },
+                    "422": {
+                        "description": "خطای اعتبارسنجی"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "حذف دسته‌بندی",
+                "operationId": "756722396e786e2dcc5afb5977900fc2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "شناسه دسته‌بندی",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "دسته‌بندی با موفقیت حذف شد"
+                    },
+                    "404": {
+                        "description": "دسته‌بندی پیدا نشد"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -403,6 +584,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Category",
+            "description": "Category"
         }
     ]
 }

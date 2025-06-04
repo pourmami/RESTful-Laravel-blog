@@ -13,6 +13,9 @@ class AddRolesSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::firstOrCreate(['name' => 'user']);
+        Role::insert([
+            ['name' => 'user', 'guard_name' => 'web'],
+            ['name' => 'admin', 'guard_name' => 'web']
+        ]);
     }
 }
