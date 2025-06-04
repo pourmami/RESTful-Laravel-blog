@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
  *     title="Blog API",
  *     description="مستندات RESTful API پروژه بلاگ برای مصاحبه",
  *     @OA\Contact(
- *         email="mohammad@example.com"
+ *         email="m.pourmami@gmail.com"
  *     )
  * )
  *
