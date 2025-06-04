@@ -1,14 +1,15 @@
 <?php
 
-namespace Modules\Auth\Tests\Unit;
+namespace Modules\Auth\Tests\Feature;
 
-use App\Models\User;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LoginTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     /** @test */
     public function user_can_login_with_valid_credentials()
@@ -35,13 +36,14 @@ class LoginTest extends TestCase
     /** @test */
     public function user_cannot_login_with_invalid_password()
     {
+        $email = Str::random(5) . '@example.com';
         User::factory()->create([
-            'email' => 'test@example.com',
+            'email' => $email,
             'password' => bcrypt('correct_password'),
         ]);
 
         $response = $this->postJson('/api/auth/login', [
-            'email' => 'test@example.com',
+            'email' => $email,
             'password' => 'wrong_password',
         ]);
 
