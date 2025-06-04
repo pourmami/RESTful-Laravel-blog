@@ -102,6 +102,42 @@
                 ]
             }
         },
+        "/api/articles/{slug}": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "نمایش یک مقاله منتشرشده با استفاده از اسلاگ",
+                "description": "این API یک مقاله را فقط در صورتی که منتشر شده باشد (status = published) با استفاده از slug نمایش می‌دهد.",
+                "operationId": "3b2ab56d61f4a745b77d2ad4522e7f23",
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "description": "اسلاگ مقاله",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "مقاله با موفقیت بازیابی شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ArticleResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "مقاله یافت نشد یا منتشر نشده است"
+                    }
+                }
+            }
+        },
         "/api/articles/{id}": {
             "put": {
                 "tags": [

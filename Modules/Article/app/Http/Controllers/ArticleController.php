@@ -28,6 +28,11 @@ class ArticleController extends Controller
 
         return response()->json(ArticleResource::collection($articles));
     }
+    public function show($slug): JsonResponse
+    {
+        $article = Article::whereSlug($slug)->whereStatus('published')->with('category', 'author')->first();
+        return response()->json(new ArticleResource($article));
+    }
 
     public function store(StoreArticleRequest $request): JsonResponse
     {

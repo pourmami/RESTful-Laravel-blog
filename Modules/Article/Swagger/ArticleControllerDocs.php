@@ -77,6 +77,29 @@ namespace Modules\Article\Swagger;
  *     )
  * )
  *
+ * @OA\Get(
+ *      path="/api/articles/{slug}",
+ *      summary="نمایش یک مقاله منتشرشده با استفاده از اسلاگ",
+ *      description="این API یک مقاله را فقط در صورتی که منتشر شده باشد (status = published) با استفاده از slug نمایش می‌دهد.",
+ *      tags={"Articles"},
+ *      @OA\Parameter(
+ *          name="slug",
+ *          in="path",
+ *          required=true,
+ *          description="اسلاگ مقاله",
+ *          @OA\Schema(type="string")
+ *      ),
+ *      @OA\Response(
+ *          response=200,
+ *          description="مقاله با موفقیت بازیابی شد",
+ *          @OA\JsonContent(ref="#/components/schemas/ArticleResource")
+ *      ),
+ *      @OA\Response(
+ *          response=404,
+ *          description="مقاله یافت نشد یا منتشر نشده است"
+ *      )
+ *  )
+ *
  * @OA\Post(
  *      path="/api/articles",
  *      summary="ایجاد مقاله جدید",

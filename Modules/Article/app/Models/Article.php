@@ -2,6 +2,7 @@
 namespace Modules\Article\app\Models;
 
 use App\Models\User;
+use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Category\app\Models\Category;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,11 @@ class Article extends Model
     ];
 
     protected $dates = ['published_at'];
+
+    protected static function newFactory(): ArticleFactory
+    {
+        return ArticleFactory::new();
+    }
 
     public function category(): BelongsTo
     {
