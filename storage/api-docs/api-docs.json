@@ -22,7 +22,7 @@
                 ],
                 "summary": "ارسال کد فعال‌سازی",
                 "description": "ایمیل کاربر را گرفته و یک کد فعال‌سازی برای او ارسال می‌کند",
-                "operationId": "820ce2b825513938a9020e44615b0707",
+                "operationId": "71b1461af64ac8441b27dbd9d81d49bd",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -60,7 +60,7 @@
                 ],
                 "summary": "بررسی صحت کد فعال‌سازی",
                 "description": "ایمیل و کد فعال‌سازی را بررسی می‌کند و در صورت معتبر بودن توکن موقت برمی‌گرداند.",
-                "operationId": "1e30469eafbb110a0381e46785445783",
+                "operationId": "39b18677448ba0463be8b9a9ce95c44c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -201,7 +201,7 @@
                     "Auth"
                 ],
                 "summary": "ورود کاربر با ایمیل و رمز عبور",
-                "operationId": "421cf2feefd4ce98e4cf85479ed54495",
+                "operationId": "56f34e4556b9af20f994e1b44871dc7f",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -297,13 +297,14 @@
                 }
             }
         },
-        "/api/auth/request-reset-password": {
+        "/api/auth/forgot-password": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "ارسال کد بازیابی رمز عبور",
-                "operationId": "3f1328b6ef6dadf538679028a4dec251",
+                "description": "* @OA\\Post(\n*     path=\"/api/auth/forgot-password\",\n*     summary=\"ارسال کد بازیابی رمز عبور\",\n*     tags={\"Auth\"},\n*     @OA\\RequestBody(\n*         required=true,\n*         @OA\\JsonContent(\n*             required={\"email\"},\n*             @OA\\Property(property=\"email\", type=\"string\", format=\"email\", example=\"user@example.com\")\n*         )\n*     ),\n*     @OA\\Response(\n*         response=200,\n*         description=\"کد بازیابی رمز عبور ارسال شد\"\n*     ),\n*     @OA\\Response(\n*         response=422,\n*         description=\"ایمیل نامعتبر یا یافت نشد\"\n*     )\n* )\n*\n* @OA\\Post(\n*     path=\"/api/auth/reset-password\",\n*     summary=\"تنظیم رمز جدید با کد تایید\",\n*     tags={\"Auth\"},\n*     @OA\\RequestBody(\n*         required=true,\n*         @OA\\JsonContent(\n*             required={\"email\", \"code\", \"password\", \"password_confirmation\"},\n*             @OA\\Property(property=\"email\", type=\"string\", format=\"email\", example=\"user@example.com\"),\n*             @OA\\Property(property=\"code\", type=\"string\", example=\"123456\"),\n*             @OA\\Property(property=\"password\", type=\"string\", format=\"password\", example=\"12345678\"),\n*             @OA\\Property(property=\"password_confirmation\", type=\"string\", format=\"password\", example=\"12345678\")\n*         )\n*     ),\n*     @OA\\Response(\n*         response=200,\n*         description=\"رمز عبور با موفقیت تغییر یافت\"\n*     ),\n*     @OA\\Response(\n*         response=422,\n*         description=\"کد تایید نامعتبر یا منقضی شده\"\n*     )\n* )",
+                "operationId": "4a038cc87c1bce3baed9cf75cdac1929",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -340,7 +341,7 @@
                     "Auth"
                 ],
                 "summary": "تنظیم رمز جدید با کد تایید",
-                "operationId": "e08a13da1d76ef5182ce1e04d19fd218",
+                "operationId": "e6570717bd34684a6d303a9f8a39ee71",
                 "requestBody": {
                     "required": true,
                     "content": {

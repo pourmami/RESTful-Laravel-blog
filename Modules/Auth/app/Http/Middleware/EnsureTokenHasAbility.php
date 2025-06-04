@@ -15,7 +15,7 @@ class EnsureTokenHasAbility
         $user = $request->user();
 
         if (!$user || !$user->tokenCan($ability)) {
-            return response()->json(['message' => 'Unauthorized.'], 403);
+            return response()->json(['message' => "there is no access to this endpoint.".$ability], 403);
         }
 
         return $next($request);
