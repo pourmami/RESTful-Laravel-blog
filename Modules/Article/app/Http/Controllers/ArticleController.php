@@ -21,7 +21,8 @@ class ArticleController extends Controller
     {
         $cache_key = 'articles_index_' . md5($request->fullUrl());
         $articles = Cache::remember($cache_key, 60, function () use ($request) {
-            return Article::whereStatus('published')->filter($request->all())->with('category', 'author')->paginate(10);
+            return Article::whereStatus('published')->whereNull('archived_at')
+                ->filter($request->all())->with('category', 'author')->paginate(10);
         });
 
         $this->remember_dynamic_keys('article_cache_keys', $cache_key);
@@ -30,7 +31,8 @@ class ArticleController extends Controller
     }
     public function show($slug): JsonResponse
     {
-        $article = Article::whereSlug($slug)->whereStatus('published')->with('category', 'author')->first();
+        $article = Article::whereSlug($slug)->whereStatus('published')
+            ->whereNull('archived_at')->with('category', 'author')->first();
         return response()->json(new ArticleResource($article));
     }
 
