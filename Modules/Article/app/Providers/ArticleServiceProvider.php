@@ -2,6 +2,7 @@
 
 namespace Modules\Article\app\Providers;
 
+use Modules\Article\app\Observers\ArticleObserver;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Illuminate\Support\Facades\Gate;
@@ -31,6 +32,7 @@ class ArticleServiceProvider extends ServiceProvider
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
         Gate::policy(Article::class, ArticlePolicy::class);
+        Article::observe(ArticleObserver::class);
     }
 
     /**

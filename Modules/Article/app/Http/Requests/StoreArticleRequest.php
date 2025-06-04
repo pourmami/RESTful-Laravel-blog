@@ -13,11 +13,11 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             'title'        => ['required', 'string', 'max:255'],
-            'slug'         => ['required','string', 'max:255', 'unique:articles,slug'],
-            'content'      => ['required','string'],
-            'category_id'  => ['required','exists:categories,id'],
-            'status'       => ['in:draft,published'],
-            'published_at' => ['nullable','date'],
+            'slug'         => ['required', 'string', 'max:255', 'unique:articles,slug'],
+            'body'         => ['required', 'string'],
+            'status'       => ['required', 'in:draft,published'],
+            'published_at' => ['nullable', 'date', 'after_or_equal:today'],
+            'category_id'  => ['required', 'exists:categories,id'],
         ];
     }
 

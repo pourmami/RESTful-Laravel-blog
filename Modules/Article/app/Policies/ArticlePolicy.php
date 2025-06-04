@@ -14,11 +14,11 @@ class ArticlePolicy
 
     public function update(User $user, Article $article): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('admin') && $user->id === $article->user_id;
     }
 
     public function delete(User $user, Article $article): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasRole('admin') && $user->id === $article->user_id;
     }
 }
