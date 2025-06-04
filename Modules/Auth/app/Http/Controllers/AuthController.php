@@ -2,11 +2,13 @@
 
 namespace Modules\Auth\app\Http\Controllers;
 
+use App\Mail\VerifyEmailCode;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Modules\Auth\app\Http\Requests\LoginRequest;
 use Modules\Auth\app\Models\ActivationCode;
@@ -26,7 +28,7 @@ class AuthController extends Controller
             'expires_at' => now()->addMinutes(10),
         ]);
 
-        // TODO: Mail::to($request->email)->send(new ActivationCodeMail($code));
+        Mail::to($request->email)->queue(new VerifyEmailCode($code));
 
         return response()->json(['message' => 'کد فعال‌سازی ارسال شد.']);
     }

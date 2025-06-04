@@ -3,9 +3,11 @@
 namespace Modules\Auth\app\Http\Controllers;
 
 use App\Models\User;
+use App\Mail\ResetPasswordEmail;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Modules\Auth\app\Models\ActivationCode;
 use Modules\Auth\app\Http\Requests\ResetPasswordRequest;
 use Modules\Auth\app\Http\Requests\SendResetCodeRequest;
@@ -24,7 +26,7 @@ class ForgetPasswordController extends Controller
             ]
         );
 
-        // TODO: Mail::to($request->email)->send(new ForgetPasswordCodeMail($code));
+        Mail::to($request->email)->queue(new ResetPasswordEmail());
 
         return response()->json(['message' => 'کد بازیابی رمز عبور ارسال شد']);
     }
