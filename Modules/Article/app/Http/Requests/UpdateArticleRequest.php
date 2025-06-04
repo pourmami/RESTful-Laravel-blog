@@ -15,8 +15,10 @@ class UpdateArticleRequest extends FormRequest
             'title'        => ['sometimes', 'required', 'string', 'max:255'],
             'slug'         => ['sometimes', 'required', 'string', 'unique:articles,slug,' . $this->article->id],
             'body'         => ['sometimes', 'required', 'string'],
-            'status'       => ['sometimes', 'required', 'in:draft,published'],
+            'excerpt'      => ['nullable', 'string'],
+            'status'       => ['sometimes', 'required', 'in:draft,published,scheduled'],
             'published_at' => ['nullable', 'date', 'after_or_equal:today'],
+            'archived_at'  => ['nullable', 'date', 'after:published_at'],
             'category_id'  => ['sometimes', 'exists:categories,id'],
         ];
     }

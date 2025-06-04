@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->app->booted(function () {
+            $schedule = app(Schedule::class);
+            $schedule->command('articles:publish-scheduled')->everyMinute();
+        });
     }
 }

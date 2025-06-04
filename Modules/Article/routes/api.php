@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Article\app\Http\Controllers\ArticleController;
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/articles', [ArticleController::class, 'store']);
+Route::get('articles', [ArticleController::class, 'index']);
+Route::middleware(['auth:sanctum', 'api_role:admin'])->group(function () {
+    Route::resource('/articles', ArticleController::class)
+        ->except(['index', 'create', 'edit']);
 });

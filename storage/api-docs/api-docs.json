@@ -15,6 +15,179 @@
         }
     ],
     "paths": {
+        "/api/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "لیست مقالات با قابلیت فیلتر و صفحه‌بندی",
+                "operationId": "f08325383147ba69d46aad3a08d53bdd",
+                "parameters": [
+                    {
+                        "name": "author_name",
+                        "in": "query",
+                        "description": "فیلتر بر اساس نام نویسنده مقاله",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_name",
+                        "in": "query",
+                        "description": "فیلتر بر اساس نام دسته‌بندی",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "جستجو در عنوان یا متن مقاله",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "لیست مقالات با موفقیت بازگردانده شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ArticleResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "ایجاد مقاله جدید",
+                "operationId": "9f4ed25991d1ab55632415486d458330",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreArticleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "مقاله با موفقیت ایجاد شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ArticleResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/articles/{id}": {
+            "put": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "بروزرسانی مقاله",
+                "operationId": "2956fec4accc2197a30d6ae247770ca4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateArticleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "مقاله با موفقیت بروزرسانی شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ArticleResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "حذف مقاله",
+                "operationId": "c0190a453aba5b8f53f2c25a5971ab6b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "مقاله حذف شد",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "مقاله حذف شد."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
         "/api/auth/send-code": {
             "post": {
                 "tags": [
@@ -572,6 +745,144 @@
         }
     },
     "components": {
+        "schemas": {
+            "ArticleResource": {
+                "title": "Article Resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "عنوان مقاله"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "article-title"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "محتوای کامل مقاله"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-04T15:00:00Z"
+                    },
+                    "category": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 2
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "الکترونیک"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "author": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 5
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Mohammad"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreArticleRequest": {
+                "required": [
+                    "title",
+                    "slug",
+                    "body",
+                    "status"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "عنوان مقاله"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "article-title"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "متن کامل مقاله..."
+                    },
+                    "excerpt": {
+                        "type": "string",
+                        "example": "خلاصه‌ای از مقاله..."
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "published",
+                            "draft",
+                            "scheduled"
+                        ],
+                        "example": "draft"
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-04T10:00:00Z"
+                    },
+                    "archived_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-10T10:00:00Z"
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateArticleRequest": {
+                "required": [
+                    "title",
+                    "slug",
+                    "body",
+                    "category_id",
+                    "published_at"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "عنوان جدید مقاله"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "new-article-title"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "محتوای جدید مقاله"
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "published_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-05T10:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "Bearer": {
                 "type": "http",
@@ -581,6 +892,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Articles",
+            "description": "Articles"
+        },
         {
             "name": "Auth",
             "description": "Auth"

@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('body');
             $table->text('excerpt')->nullable();
+            $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
             $table->timestamp('published_at')->nullable();
+            $table->timestamp('archived_at')->nullable();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
